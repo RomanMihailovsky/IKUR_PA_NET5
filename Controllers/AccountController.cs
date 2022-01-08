@@ -28,6 +28,7 @@ namespace IKUR_PA_NET5.Controllers
 
         // ----------------------------- Register
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -49,7 +50,18 @@ namespace IKUR_PA_NET5.Controllers
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+
+                    // ============================================================================================================
+                    //return RedirectToAction("Index", "Home");
+                    // ============================================================================================================
+
+                    //ConfirmPhoneNumberViewModel confirmphone_model = new ConfirmPhoneNumberViewModel()
+                    //{
+                    //    PhoneNumber = model.PhoneNumber
+                    //};
+
+                    return RedirectToAction("ConfirmPhoneNumber", "Account", new { model.PhoneNumber });
+
                 }
                 else
                 {
@@ -69,6 +81,96 @@ namespace IKUR_PA_NET5.Controllers
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
+        [HttpGet]
+        public IActionResult LoginSms(string returnUrl = null)
+        {
+            return View(new LoginSmsViewModel { ReturnUrl = returnUrl });
+        }
+
+
+        [HttpGet]
+        public IActionResult ConfirmPhoneNumber(string phonenumber, string returnUrl = null)
+        {
+            return View(new ConfirmPhoneNumberViewModel { ReturnUrl = returnUrl, PhoneNumber = phonenumber });            
+        }
+
+
+        // ----------------------------- ConfirmPhoneNumber
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmPhoneNumber(ConfirmPhoneNumberViewModel model)
+        {
+
+            // @@@@@@@@@ ПРОВЕРКА СОВПАДЕНИЯ ОТПРАВЛЕННОГО КОДА с model.CodeSMS;
+            // @@@@@@@@@ ПОСМОТРЕТь DNS как себя ведет при неверно указанном Коде SMS
+
+            if (ModelState.IsValid)
+            {
+                string phonenumber = model.PhoneNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
+
+                User user = new User
+                {
+                    UserName = phonenumber,  // Номер телефона Вместо UserName 
+                    PhoneNumber = phonenumber,
+                    PhoneNumberConfirmed = true // @@@@@@@@@@  PhoneNumberConfirmed = true
+                };
+                // добавляем пользователя
+                var result = await _userManager.CreateAsync(user);  // @@@@@@@@@@ USER БЕЗ ПАРОЛЯ
+                if (result.Succeeded)
+                {
+                    // установка куки
+                    await _signInManager.SignInAsync(user, false);
+
+                    // @@@@@@@@@@@ ЕСЛИ ПУСТЫЕ ЗНАЧЕНИЯ ФИО
+                    // @@@@@@@@@@@ ПЕРЕХОД К ЗАПОЛНЕНИЮ ФИО
+
+                    return RedirectToAction("Index", "Home");
+                    
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+        // ----------------------------- LoginSms
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginSms(LoginSmsViewModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                // проверяем, принадлежит ли URL приложению
+                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                {
+                    return Redirect(model.ReturnUrl);
+                }
+                else
+                {
+                    //// установка куки
+                    //await _signInManager.SignInAsync(user, false);
+
+                    //ConfirmPhoneNumberViewModel confirmphone_model   = new ConfirmPhoneNumberViewModel() 
+                    //{ 
+                    //    PhoneNumber = model.PhoneNumber  
+                    //};
+
+                    return RedirectToAction("ConfirmPhoneNumber", "Account", new { model.PhoneNumber });
+                }
+               
+            }
+
+            return View(model);
+
+        }
+
 
         // ----------------------------- Login
         [HttpPost]
@@ -78,27 +180,7 @@ namespace IKUR_PA_NET5.Controllers
             if (ModelState.IsValid)
             {
 
-                string phonenumber = model.PhoneNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ","");
-
-
-                //var user = await UserManager<User>.ChangePhoneNumberTokenPurpose FindAsync(phonenumber, model.Password);
-                //if (user != null)
-                //{
-                //    if (user. == true)   // (if user.ConfirmedCodeSMS = true)
-                //    {
-                //        await SignInAsync(user, model.RememberMe);
-                //        return RedirectToLocal(returnUrl);
-                //    }
-                //    else
-                //    {
-                //        ModelState.AddModelError("", "Не подтвержден email.");
-                //    }
-                //}
-                //else
-                //{
-                //    ModelState.AddModelError("", "Неверный Логин или Пароль.");
-                //}
-
+                string phonenumber = model.PhoneNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
 
                 var result =
                     await _signInManager.PasswordSignInAsync(phonenumber, model.Password, model.RememberMe, false);
@@ -111,16 +193,19 @@ namespace IKUR_PA_NET5.Controllers
                     }
                     else
                     {
+
                         return RedirectToAction("Index", "Home");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                    ModelState.AddModelError("", "Телефон или пароль указаны неверно");
                 }
             }
             return View(model);
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

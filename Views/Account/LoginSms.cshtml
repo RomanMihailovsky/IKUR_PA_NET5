@@ -1,0 +1,59 @@
+﻿
+@model IKUR_PA_NET5.ViewModels.LoginSmsViewModel
+
+<form method="post" asp-controller="Account" asp-action="LoginSms" asp-route-returnUrl="@Model.ReturnUrl">
+
+    <div class="card" style="width:350px">
+
+        <div class="card-header">
+            <h5>Вход в личный кабинет</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div>
+                <span class="align-bottom font-weight-bold">Номер телефона</span>
+                <span asp-validation-for="PhoneNumber" class="text-danger align-bottom"></span>
+                <input asp-for="PhoneNumber" class="form-control font-weight-bold" />
+
+            </div>
+
+            <p></p>
+            <div asp-validation-summary="ModelOnly" class="alert-danger" role="alert"></div>
+
+            <div>
+                <input type="submit" value="Получить код" class="btn btn-info btn-lg btn-block" />
+            </div>
+            <p></p>
+
+            <div>
+                <span>Другие способы входа:</span>
+            </div>
+
+            <div>
+                <a asp-controller="Account" asp-action="Login">Войти с паролем</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+@*<script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/jquery/dist/jquery.maskedinput.min.js"></script>*@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+<script language="javascript">
+    $(function ($) {
+
+        //$('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+
+        $("#PhoneNumber").focus();
+
+    });
+
+</script>
+
+

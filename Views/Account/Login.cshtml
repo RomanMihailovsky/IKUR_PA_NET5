@@ -31,12 +31,22 @@
 
             <p></p>
             @*<div>
-                <input asp-for="RememberMe" /> <label asp-for="RememberMe"></label>
-            </div>*@
+            <input asp-for="RememberMe" /> <label asp-for="RememberMe"></label>
+        </div>*@
 
             <div>
                 <input type="submit" value="Войти" class="btn btn-info btn-lg btn-block" />
             </div>
+
+            <p></p>
+            <div>
+                <span>Другие способы входа:</span>
+            </div>
+
+            <div>
+                <a asp-controller="Account" asp-action="LoginSms">Войти с кодом SMS</a>
+            </div>
+
             <p></p>
             <div>
                 <a asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
@@ -56,7 +66,7 @@
 <script language="javascript">
     $(function ($) {
 
-        $('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+        //$('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
 
         $("#PhoneNumber").focus();
 

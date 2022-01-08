@@ -1,0 +1,44 @@
+﻿
+@model IKUR_PA_NET5.ViewModels.ConfirmPhoneNumberViewModel
+
+
+<form method="post" asp-controller="Account" asp-action="ConfirmPhoneNumber" asp-route-returnUrl="@Model.ReturnUrl">
+
+    <div class="card" style="width:350px">
+
+        <div class="card-header">
+            <h5>Подтверждение номера телефона</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div>
+                <span class="align-bottom font-weight-bold">Номер телефона</span>
+                <input asp-for="PhoneNumber" class="form-control font-weight-bold"/>
+
+            </div>
+
+            <div>
+                <span class="align-bottom font-weight-bold">Код из SMS</span>
+                <span asp-validation-for="CodeSMS" class="text-danger align-bottom"></span>
+                <input asp-for="CodeSMS" class="form-control font-weight-bold" />
+            </div>
+
+            <p></p>
+            <div asp-validation-summary="ModelOnly" class="alert-danger" role="alert"></div>
+
+            <p></p>
+            <div>
+                <input type="submit" value="Продолжить" class="btn btn-info btn-lg btn-block" />
+            </div>
+
+            <p></p>
+            <div>
+                <a asp-controller="Account" asp-action="SendSMS">Отправить код повторно, через ...</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
