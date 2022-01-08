@@ -1,0 +1,83 @@
+﻿@model IKUR_PA_NET5.ViewModels.RegisterViewModel
+@*<h4>Регистрация нового пользователя</h4>*@
+<form method="post" asp-controller="Account" asp-action="Register">
+
+    <div class="card" style="width:420px">
+
+        <div class="card-header">
+            <h5>Регистрация нового пользователя</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div>
+                <span class="font-weight-bold align-bottom">Номер телефона</span> @*<label class="text-danger font-weight-bold">*</label>*@
+                <span asp-validation-for="PhoneNumber" class="text-danger align-bottom"></span>
+                <input asp-for="PhoneNumber" class="form-control" />
+            </div>
+            <div>
+                <span class="font-weight-bold align-bottom">Фамилия</span> @*<label class="text-danger font-weight-bold">*</label>*@
+                <span asp-validation-for="Surname" class="text-danger align-bottom"></span>
+                <input asp-for="Surname" class="form-control" />
+            </div>
+            <div>
+                <span class="font-weight-bold align-bottom">Имя</span> @*<label class="text-danger font-weight-bold">*</label>*@
+                <span asp-validation-for="Name" class="text-danger align-bottom"></span>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div>
+                <span class="font-weight-bold align-bottom">Отчество</span> @*<label class="text-danger font-weight-bold">*</label>*@
+                <span asp-validation-for="MiddleName" class="text-danger align-bottom"></span>
+                <input asp-for="MiddleName" class="form-control" />
+
+            </div>
+
+            @*<div>
+                    <label asp-for="BirthDay"></label>
+                    <span asp-validation-for="BirthDay" class="text-danger"></span>
+                    <input asp-for="BirthDay" type="date" class="form-control" />
+                </div>
+
+                <div>
+                    <label asp-for="Email"></label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <input asp-for="Email" class="form-control" />
+                </div>*@
+
+            <div>
+                <span class="font-weight-bold align-bottom">Пароль</span> @*<label class="text-danger font-weight-bold">*</label>*@
+                <span asp-validation-for="Password" class="text-danger align-bottom"></span>
+                <input asp-for="Password" class="form-control" />
+            </div>
+            <div>
+                <span class="font-weight-bold align-bottom">Пароль (подтверждение)</span> @*<label class="text-danger font-weight-bold">*</label>*@
+                <span asp-validation-for="PasswordConfirm" class="text-danger align-bottom"></span>
+                <input asp-for="PasswordConfirm" class="form-control" />
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @*<label class="text-danger">* - обязательные для заполнения поля</label>*@
+            <p></p>
+            <div>
+                <input type="submit" value="Регистрация" class="btn btn-info btn-lg btn-block" />
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+<script language="javascript">
+    $(function ($) {
+
+        $('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+
+        $("#PhoneNumber").focus();
+
+    });
+
+</script>
