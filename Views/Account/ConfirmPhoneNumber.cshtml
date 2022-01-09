@@ -14,14 +14,23 @@
 
             <div>
                 <span class="align-bottom font-weight-bold">Номер телефона</span>
-                <input asp-for="PhoneNumber" class="form-control font-weight-bold"/>
+                <input asp-for="PhoneNumber" class="form-control font-weight-bold" />
 
             </div>
 
+            <p></p>
             <div>
                 <span class="align-bottom font-weight-bold">Код из SMS</span>
                 <span asp-validation-for="CodeSMS" class="text-danger align-bottom"></span>
-                <input asp-for="CodeSMS" class="form-control font-weight-bold" />
+            </div>
+
+
+            <div class="input-group">
+                <input asp-for="CodeSMS" class="form-control font-weight-bold" aria-describedby="basic-addon1" />
+                <div class="input-group-append">
+                    @*<button class="btn btn-info" type="button">Далее</button>*@
+                    <input type="submit" value="Далее" class="btn btn-info" />
+                </div>
             </div>
 
             <p></p>
@@ -29,12 +38,16 @@
 
             <p></p>
             <div>
-                <input type="submit" value="Продолжить" class="btn btn-info btn-lg btn-block" />
+                <a asp-controller="Account" asp-action="SendSMS">Отправить код повторно, через ...</a>
             </div>
 
             <p></p>
             <div>
-                <a asp-controller="Account" asp-action="SendSMS">Отправить код повторно, через ...</a>
+                <span>Другие способы входа:</span>
+            </div>
+
+            <div>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-info">Войти с паролем </a>
             </div>
 
         </div>
@@ -42,3 +55,17 @@
     </div>
 
 </form>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+<script language="javascript">
+    $(function ($) {
+
+        $('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+
+        $("#CodeSMS").focus();
+
+    });
+
+</script>

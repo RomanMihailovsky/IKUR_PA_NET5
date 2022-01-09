@@ -3,7 +3,7 @@
 
 <form method="post" asp-controller="Account" asp-action="LoginSms" asp-route-returnUrl="@Model.ReturnUrl">
 
-    <div class="card" style="width:350px">
+    <div class="card" style="width:300px">
 
         <div class="card-header">
             <h5>Вход в личный кабинет</h5>
@@ -31,7 +31,12 @@
             </div>
 
             <div>
-                <a asp-controller="Account" asp-action="Login">Войти с паролем</a>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-info">Войти с паролем</a>
+            </div>
+
+            <p></p>
+            <div>
+                <a asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
             </div>
 
         </div>
@@ -48,7 +53,7 @@
 <script language="javascript">
     $(function ($) {
 
-        //$('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+        $('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
 
         $("#PhoneNumber").focus();
 

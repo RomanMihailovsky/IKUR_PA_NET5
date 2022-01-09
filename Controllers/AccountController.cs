@@ -26,18 +26,18 @@ namespace IKUR_PA_NET5.Controllers
             return View();
         }
 
-        // ----------------------------- Register
+        //============================================================================================================
+        //                            Register. Регистрация.
+        //============================================================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                string phonenumber = model.PhoneNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
-
                 User user = new User { 
-                    UserName = phonenumber,  // Номер телефона Вместо UserName 
-                    PhoneNumber = phonenumber,
+                    UserName = model.PhoneNumber,  // Номер телефона Вместо UserName 
+                    PhoneNumber = model.PhoneNumber,
                     Surname = model.Surname,
                     Name = model.Name,
                     MiddleName = model.MiddleName,
@@ -51,15 +51,11 @@ namespace IKUR_PA_NET5.Controllers
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
 
-                    // ============================================================================================================
+                    // -----------------------------------------------------------------------------------
                     //return RedirectToAction("Index", "Home");
-                    // ============================================================================================================
+                    // -----------------------------------------------------------------------------------
 
-                    //ConfirmPhoneNumberViewModel confirmphone_model = new ConfirmPhoneNumberViewModel()
-                    //{
-                    //    PhoneNumber = model.PhoneNumber
-                    //};
-
+                    // -- Переход к "Подтверждению номера телефона", т.к. user новый
                     return RedirectToAction("ConfirmPhoneNumber", "Account", new { model.PhoneNumber });
 
                 }
@@ -67,7 +63,15 @@ namespace IKUR_PA_NET5.Controllers
                 {
                     foreach (var error in result.Errors)
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        if (error.Code == "DuplicateUserName")
+                        {
+                            ModelState.AddModelError(string.Empty, $"Пользователь с номер {model.PhoneNumber} уже существует");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        
                     }
                 }
             }
@@ -91,55 +95,79 @@ namespace IKUR_PA_NET5.Controllers
         [HttpGet]
         public IActionResult ConfirmPhoneNumber(string phonenumber, string returnUrl = null)
         {
-            return View(new ConfirmPhoneNumberViewModel { ReturnUrl = returnUrl, PhoneNumber = phonenumber });            
+            //  TODO  SMSSender.Send. Отправка SMS  @@@@@@@@@
+
+            return View(new ConfirmPhoneNumberViewModel { ReturnUrl = returnUrl, PhoneNumber = phonenumber });
         }
 
+        //[HttpGet]
+        // В model значения null даже если передаешь модель
+        //public IActionResult ConfirmPhoneNumber(ConfirmPhoneNumberViewModel model, string returnUrl = null)
+        //{  
+        //    model.ReturnUrl = returnUrl;
+        //    return View(model);
+        //}
 
-        // ----------------------------- ConfirmPhoneNumber
+        //============================================================================================================
+        //           ConfirmPhoneNumber. Подтверждение номера тел. по SMS
+        //============================================================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmPhoneNumber(ConfirmPhoneNumberViewModel model)
         {
 
-            // @@@@@@@@@ ПРОВЕРКА СОВПАДЕНИЯ ОТПРАВЛЕННОГО КОДА с model.CodeSMS;
-            // @@@@@@@@@ ПОСМОТРЕТь DNS как себя ведет при неверно указанном Коде SMS
-
             if (ModelState.IsValid)
             {
-                string phonenumber = model.PhoneNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
 
-                User user = new User
+                if (model.CodeSMS == "5555")
                 {
-                    UserName = phonenumber,  // Номер телефона Вместо UserName 
-                    PhoneNumber = phonenumber,
-                    PhoneNumberConfirmed = true // @@@@@@@@@@  PhoneNumberConfirmed = true
-                };
-                // добавляем пользователя
-                var result = await _userManager.CreateAsync(user);  // @@@@@@@@@@ USER БЕЗ ПАРОЛЯ
-                if (result.Succeeded)
-                {
-                    // установка куки
-                    await _signInManager.SignInAsync(user, false);
+                    User user = new User
+                    {
+                        UserName = model.PhoneNumber,  // Номер телефона Вместо UserName 
+                        PhoneNumber = model.PhoneNumber,
+                        PhoneNumberConfirmed = true // @@@@@@ PhoneNumberConfirmed = true
+                    };
 
-                    // @@@@@@@@@@@ ЕСЛИ ПУСТЫЕ ЗНАЧЕНИЯ ФИО
-                    // @@@@@@@@@@@ ПЕРЕХОД К ЗАПОЛНЕНИЮ ФИО
+                    // TODO Проверить сущ. user в базе. Если нет, добавить.
 
-                    return RedirectToAction("Index", "Home");
-                    
+                    // добавление user
+                    // если user сущ. // Username '+79127674499' is already taken.
+                    var result = await _userManager.CreateAsync(user);  // TODO USER БЕЗ ПАРОЛЯ ??? @@@@@@
+
+                    // TODO Если user существует в базе. Проверить если Empty SurName. ПЕРЕХОД к Register
+
+                    if (result.Succeeded)
+                    {
+                        // установка куки 
+                        //await _signInManager.SignInAsync(user, false);
+
+                        // TODO ЕСЛИ Empty SurName ПЕРЕХОД К Register с передачей model
+
+                        return RedirectToAction("Index", "Home");
+
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
+
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    ModelState.AddModelError("", "Введен неверный код");
                 }
+                 
             }
 
             return View(model);
         }
 
-        // ----------------------------- LoginSms
+        //============================================================================================================
+        //                    LoginSms. Вход по коду SMS
+        //============================================================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoginSms(LoginSmsViewModel model)
@@ -154,15 +182,10 @@ namespace IKUR_PA_NET5.Controllers
                 }
                 else
                 {
-                    //// установка куки
-                    //await _signInManager.SignInAsync(user, false);
+                    //ConfirmPhoneNumberViewModel model_confirm = new ConfirmPhoneNumberViewModel() { PhoneNumber = model.PhoneNumber };
 
-                    //ConfirmPhoneNumberViewModel confirmphone_model   = new ConfirmPhoneNumberViewModel() 
-                    //{ 
-                    //    PhoneNumber = model.PhoneNumber  
-                    //};
-
-                    return RedirectToAction("ConfirmPhoneNumber", "Account", new { model.PhoneNumber });
+                    // -- Переход к "Подтверждению номера телефона"
+                    return RedirectToAction("ConfirmPhoneNumber", "Account", new { model.PhoneNumber } );
                 }
                
             }
@@ -171,8 +194,9 @@ namespace IKUR_PA_NET5.Controllers
 
         }
 
-
-        // ----------------------------- Login
+        //============================================================================================================
+        //                    Login. Вход с паролем
+        //============================================================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -180,10 +204,8 @@ namespace IKUR_PA_NET5.Controllers
             if (ModelState.IsValid)
             {
 
-                string phonenumber = model.PhoneNumber.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
-
                 var result =
-                    await _signInManager.PasswordSignInAsync(phonenumber, model.Password, model.RememberMe, false);
+                    await _signInManager.PasswordSignInAsync(model.PhoneNumber, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     // проверяем, принадлежит ли URL приложению
@@ -193,6 +215,7 @@ namespace IKUR_PA_NET5.Controllers
                     }
                     else
                     {
+                        // TODO Возможно Проверка PhoneNumberConfirmed = true  @@@@@@@@
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -204,7 +227,6 @@ namespace IKUR_PA_NET5.Controllers
             }
             return View(model);
         }
-
 
 
         [HttpPost]

@@ -8,10 +8,25 @@ namespace IKUR_PA_NET5.ViewModels
 {
     public class LoginViewModel
     {
+        private string phonenumber;
+
         [Required(ErrorMessage = "не указан")]
         //[StringLength(10, ErrorMessage = "указан не полностью", MinimumLength = 10)]
         [Display(Name = "Номер телефона")]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber
+        {
+            get
+            {
+                return phonenumber;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    phonenumber = value.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "");
+                }
+            }
+        }
 
         [Required(ErrorMessage = "не указан")]
         [DataType(DataType.Password)]

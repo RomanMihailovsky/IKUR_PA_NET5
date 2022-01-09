@@ -2,10 +2,10 @@
 @*<h4>Регистрация нового пользователя</h4>*@
 <form method="post" asp-controller="Account" asp-action="Register">
 
-    <div class="card" style="width:420px">
+    <div class="card" style="width:350px">
 
         <div class="card-header">
-            <h5>Регистрация нового пользователя</h5>
+            <h5>Регистрация пользователя</h5>
         </div>
 
         <div class="card-body">
@@ -33,16 +33,16 @@
             </div>
 
             @*<div>
-                    <label asp-for="BirthDay"></label>
-                    <span asp-validation-for="BirthDay" class="text-danger"></span>
-                    <input asp-for="BirthDay" type="date" class="form-control" />
-                </div>
+            <label asp-for="BirthDay"></label>
+            <span asp-validation-for="BirthDay" class="text-danger"></span>
+            <input asp-for="BirthDay" type="date" class="form-control" />
+            </div>
 
-                <div>
-                    <label asp-for="Email"></label>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                    <input asp-for="Email" class="form-control" />
-                </div>*@
+            <div>
+                <label asp-for="Email"></label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <input asp-for="Email" class="form-control" />
+            </div>*@
 
             <div>
                 <span class="font-weight-bold align-bottom">Пароль</span> @*<label class="text-danger font-weight-bold">*</label>*@
@@ -63,6 +63,21 @@
                 <input type="submit" value="Регистрация" class="btn btn-info btn-lg btn-block" />
             </div>
 
+            <p></p>
+            <div>
+                <span>Зарегистрированы?</span>
+            </div>
+
+            <p></p>
+            <div>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-info">Войти с паролем</a>
+            </div>
+
+            <p></p>
+            <div>
+                <a asp-controller="Account" asp-action="LoginSms" class="btn btn-sm btn-outline-info">Войти с кодом SMS</a>
+            </div>
+
         </div>
 
     </div>
@@ -74,7 +89,7 @@
 <script language="javascript">
     $(function ($) {
 
-        //$('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+        $('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
 
         $("#PhoneNumber").focus();
 

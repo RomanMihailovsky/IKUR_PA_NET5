@@ -4,7 +4,7 @@
 
 <form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
 
-    <div class="card" style="width:350px">
+    <div class="card" style="width:300px">
 
         <div class="card-header">
             <h5>Вход в личный кабинет</h5>
@@ -21,7 +21,6 @@
             <p></p>
             <div>
                 <span class="align-bottom  font-weight-bold">Пароль</span>
-                @*<span asp-validation-for="Password" class="text-danger align-bottom"></span>*@
                 <span asp-validation-for="Password" class="text-danger align-bottom"></span>
                 <input asp-for="Password" class="form-control" />
             </div>
@@ -31,8 +30,8 @@
 
             <p></p>
             @*<div>
-            <input asp-for="RememberMe" /> <label asp-for="RememberMe"></label>
-        </div>*@
+                <input asp-for="RememberMe" /> <label asp-for="RememberMe"></label>
+            </div>*@
 
             <div>
                 <input type="submit" value="Войти" class="btn btn-info btn-lg btn-block" />
@@ -44,12 +43,12 @@
             </div>
 
             <div>
-                <a asp-controller="Account" asp-action="LoginSms">Войти с кодом SMS</a>
+                <a asp-controller="Account" asp-action="LoginSms" class="btn btn-sm btn-outline-info">Войти с кодом SMS</a>
             </div>
 
             <p></p>
             <div>
-                <a asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
+                <a asp-controller="Account" asp-action="Register" >Зарегистрироваться</a>
             </div>
 
         </div>
@@ -66,7 +65,7 @@
 <script language="javascript">
     $(function ($) {
 
-        //$('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
+        $('input[name="PhoneNumber"]').mask("+7 (999) 999-99-99");
 
         $("#PhoneNumber").focus();
 
